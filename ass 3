@@ -1,0 +1,129 @@
+create table dept(
+  dept_id int primary key,
+  dept_name varchar(50),
+  dept_location varchar(50)
+);
+
+create table emp(
+  emp_id int auto_increment primary key,
+  dept_id int,
+  emp_fname varchar (50),
+  emp_lname varchar (50),
+  emp_position varchar(50),
+  emp_salary decimal (10,2),
+  emp_joindate date,
+  foreign key (dept_id) references dept(dept_id) on delete cascade
+);
+
+create table proj(
+  proj_id int primary key,
+  dept_id int,
+  proj_name varchar (50),
+  proj_location varchar (50),
+  proj_cost decimal (10,2),
+  proj_year int,
+  foreign key (dept_id) references dept(dept_id) on delete cascade
+);
+
+
+insert into dept values
+  (1,'Computer','Pune'),
+  (2,'IT','Mumbai'),
+  (3,'HR','Delhi');
+  
+insert into emp values
+ (1,1,'Aman','Shaikh','Manager',120000,'2005-03-03'),
+ (2,1,'Ketan','Kolhe','Deloper',20000,'1965-04-03'),
+ (3,2,'ishan','sayyed','Hr',120000,'2005-03-03'),
+ (4,2,'phaiyaz','sayyed','Manager',120000,'2004-03-03'),
+ (5,3,'sujal','kedari','Tester',120000,'2000-03-03'),
+ (6,3,'yash','nachan','Recruter',120000,'1977-03-03'),
+ (7,1,'raju','Shaikh','Developer',120000,'1966-03-03'),
+ (8,2,'harry','potter','Manager',120000,'1940-03-03'),
+ (9,1,'mushtak','Shaikh','support',120000,'1988-03-03'),
+ (10,3,'araman','Shaikh','Hr',120000,'2025-03-03');
+ 
+ insert into proj values 
+ (101, 1,'Ai Research','Hydrabad',450000,2015),
+ (102, 2,'Cloud Setup','Mumbai',450000,2020),
+ (103, 3,'Recruitment Drive','Delhi',450000,2007),
+ (104, 1, 'Data Analytics', 'Hydrabad', 250000, 2004),
+ (105, 2, 'Network Upgrade', 'Chennai', 6000, 2015);
+
+ 
+SELECT * FROM emp NATURAL JOIN dept;
+
+
+SELECT e.emp_fname, e.emp_position, d.dept_location, e.Emp_joindate
+FROM emp e
+JOIN dept d ON e.dept_id = d.dept_id;
+
+
+SELECT e.*,
+       p.proj_id,
+       p.proj_cost
+FROM emp AS e
+JOIN proj AS p USING (dept_id)
+WHERE p.proj_location NOT IN ('Hydrabad');
+
+
+SELECT d.dept_name, e.emp_fname, e.emp_position
+FROM dept d, emp e, proj p
+WHERE d.dept_id = e.dept_id
+  AND d.dept_id = p.dept_id
+  AND p.proj_year = 2020;
+
+
+SELECT e.emp_position, d.dept_name
+FROM dept d, emp e, proj p
+WHERE d.dept_id = e.dept_id
+  AND d.dept_id = p.dept_id
+  AND p.proj_cost > 30000;
+  
+  
+select proj_name from proj
+where proj_year = 2015;
+
+
+SELECT d.dept_name
+FROM dept AS d
+JOIN emp  AS e USING (dept_id)
+GROUP BY d.dept_id, d.dept_name
+HAVING COUNT(*) = 10;
+
+
+SELECT COUNT(*) AS totalemp
+FROM emp
+WHERE emp_joindate < '2009-01-01';
+
+
+CREATE VIEW edv AS
+SELECT e.*, d.dept_name,d.dept_location
+FROM emp AS e, dept AS d
+WHERE e.dept_id = d.dept_id;
+select * from edv;
+
+
+CREATE  VIEW empsim AS
+SELECT emp_id, emp_fname, emp_lname, dept_id, emp_position, emp_salary, emp_joindate
+FROM emp;
+
+
+INSERT INTO empsim (dept_id, emp_fname, emp_lname, emp_position, emp_salary, emp_joindate)
+VALUES (1, 'Ravi', 'Kumar', 'Developer', 75000, '2010-06-15');
+select * from empsim;
+
+UPDATE empsim
+SET emp_position = 'Senior Developer', emp_salary = 90000
+WHERE emp_fname = 'Ravi' AND emp_lname = 'Kumar';
+select * from empsim;
+
+
+DELETE FROM empsim
+WHERE emp_fname = 'Ravi' AND emp_lname = 'Kumar';
+select * from empsim;
+
+
+
+
+
