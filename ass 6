@@ -1,0 +1,63 @@
+create table odata(
+oeid int ,
+oename varchar (50),
+oecity varchar (50));
+
+create table ndata(
+neid int ,
+nename varchar (50),
+necity varchar (50));
+
+
+insert into odata values
+(1,'Aman','pune'),
+(2,'Ketan','Delhi'),
+(3,'Arthur','Mumbai');
+
+delimiter $$
+create procedure mergecus(pcity varchar (50))
+begin
+DECLARE done INT DEFAULT FALSE;
+DECLARE v_id INT;
+DECLARE v_name VARCHAR(100);
+DECLARE v_city VARCHAR(100);
+DECLARE v_count INT;
+
+declare curold cursor for 
+select oeid , oename , oecity from odata
+where oecity = pcity;
+
+declare continue handler for not found set done = true;
+
+open curold ;
+read_loop: LOOP
+FETCH curold INTO v_id, v_name, v_city;
+IF done THEN
+LEAVE read_loop;
+END IF;
+
+SELECT COUNT(*) INTO v_count FROM ndata WHERE neid = v_id;
+
+IF v_count = 0 THEN
+INSERT INTO ndata(neid, nename, necity)
+VALUES (v_id, v_name, v_city);
+            
+SELECT CONCAT('Inserted employee ID: ', v_id) AS message;
+ELSE
+SELECT CONCAT('Duplicate found, skipping employee ID: ', v_id) AS message;
+END IF;
+END LOOP;
+
+CLOSE curold;
+END$$
+
+DELIMITER ;
+
+
+CALL mergecus('delhi');
+
+
+
+select * from odata;
+select * from ndata;
+
