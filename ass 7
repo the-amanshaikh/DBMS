@@ -1,0 +1,52 @@
+create table library (
+bookid int ,
+name varchar (70),
+author varchar (70),
+category varchar (70),
+price decimal (10,2)
+);
+
+INSERT INTO library VALUES
+(1, 'The Alchemist', 'Paulo Coelho', 'Fiction', 499.00),
+(2, 'Introduction to Algorithms', 'Thomas H. Cormen', 'Education', 950.50),
+(3, 'Atomic Habits', 'James Clear', 'Self-Help', 420.75),
+(4, 'A Brief History of Time', 'Stephen Hawking', 'Science', 650.00);
+
+
+create table auditlibrary (
+bookid int ,
+name varchar (70),
+author varchar (70),
+category varchar (70),
+price decimal (10,2),
+actionperformed varchar (70),
+actiontime datetime
+);
+
+
+delimiter $$
+
+
+create trigger trg_bef_update
+before update on library
+for each row 
+begin
+if new.price < 100 then 
+set new.price = 100;
+end if;
+end $$
+
+create trigger trg_after_update 
+after update on library 
+for each row 
+begin
+insert into auditlibrary (bookid,name,author,category,price,actionperformed,actiontime)
+values (old.bookid,old.name,old.author,old.category,old.price,'UPDATED',now());
+end $$
+
+delimiter ;
+
+update library set price = 19 where bookid =1;
+
+select * from library;
+
