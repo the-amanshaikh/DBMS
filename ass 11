@@ -1,0 +1,29 @@
+db.students.insertMany([
+  {name:"aman",branch:"computer",marks:99,city:"pune"},
+  {name:"Arthur",branch:"entc",marks:88,city:"delhi"},
+  {name:"faiyaz",branch:"computer",marks:77,city:"pune"},
+  {name:"ketan",branch:"entc",marks:87,city:"goa"},
+  {name:"sujal",branch:"ece",marks:67,city:"delhi"}
+  ]);
+  
+db.students.find();
+
+var mapFunction = function () {
+  emit(this.branch ,this.marks);
+};
+
+var reduceFunction = function(branch, marksArray) {
+  return Array.avg(marksArray);
+};
+
+db.students.mapReduce(
+  mapFunction,
+  reduceFunction,
+  {
+    out : "avgm"
+  }
+);
+
+db.avgm.find();
+
+
