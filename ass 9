@@ -1,0 +1,28 @@
+db.students.insertMany([
+  {name:"aman",branch:"computer",marks:99,city:"Pune"},
+  {name:"Arthur",branch:"entc",marks:88,city:"delhi"},
+  {name:"faiyaz",branch:"ai",marks:77,city:"mumbai"},
+  {name:"ketan",branch:"mehc",marks:87,city:"goa"},
+  {name:"sujal",branch:"ece",marks:67,city:"ladhakh"}
+  ]);
+  
+db.students.find();
+
+db.students.updateOne(
+  { name : "aman"},
+  {$set : { marks : 100}}
+);
+
+db.students.find();
+
+db.students.deleteOne({ name : "sujal"});
+db.students.find();
+
+db.students.find({ marks: { $gt: 80 } });
+db.students.find({ marks: { $lt: 80 } });
+db.students.find({ marks: { $gte: 80 } });
+db.students.find({ marks: { $lte: 80 } });
+db.students.find({ marks: { $ne: 80 } });
+
+db.students.find({ $and : [{marks :{ $gte : 100}},{city: "Pune"}]});
+
