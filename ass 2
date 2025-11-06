@@ -1,0 +1,107 @@
+create table dept(
+  dept_id int primary key,
+  dept_name varchar(50),
+  dept_location varchar(50)
+);
+
+create table emp(
+  emp_id int auto_increment primary key,
+  dept_id int,
+  emp_fname varchar (50),
+  emp_lname varchar (50),
+  emp_position varchar(50),
+  emp_salary decimal (10,2),
+  emp_joindate date,
+  foreign key (dept_id) references dept(dept_id) on delete cascade
+);
+
+create table proj(
+  proj_id int primary key,
+  dept_id int,
+  proj_name varchar (50),
+  proj_location varchar (50),
+  proj_cost decimal (10,2),
+  proj_year int,
+  foreign key (dept_id) references dept(dept_id) on delete cascade
+);
+
+create view edv as 
+  select E.emp_id,E.emp_fname,E.emp_lname,D.dept_name
+  from emp E
+  join dept D on E.dept_id = D.dept_id ;
+  
+
+
+create index idx on emp(emp_position);
+
+
+insert into dept values
+  (1,'Computer','Pune'),
+  (2,'IT','Mumbai'),
+  (3,'HR','Delhi');
+  
+insert into emp values
+ (1,1,'Aman','Shaikh','Manager',120000,'2005-03-03'),
+ (2,1,'Ketan','Kolhe','Deloper',20000,'1965-04-03'),
+ (3,2,'ishan','sayyed','Hr',120000,'2005-03-03'),
+ (4,2,'phaiyaz','sayyed','Manager',120000,'2004-03-03'),
+ (5,3,'sujal','kedari','Tester',120000,'2000-03-03'),
+ (6,3,'yash','nachan','Recruter',120000,'1977-03-03'),
+ (7,1,'raju','Shaikh','Developer',120000,'1966-03-03'),
+ (8,2,'harry','potter','Manager',120000,'1940-03-03'),
+ (9,1,'mushtak','Shaikh','support',120000,'1988-03-03'),
+ (10,3,'araman','Shaikh','Hr',120000,'2025-03-03');
+ 
+ insert into proj values 
+ (101, 1,'Ai Research','Pune',450000,2004),
+ (102, 2,'Cloud Setup','Mumbai',450000,2005),
+ (103, 3,'Recruitment Drive','Delhi',450000,2007),
+ (104, 1, 'Data Analytics', 'Pune', 250000, 2004),
+ (105, 2, 'Network Upgrade', 'Chennai', 600000, 2003);
+
+ 
+ select E.*
+ From emp E 
+ join dept D on D.dept_id = E.dept_id
+ where D.dept_name in ('Computer','IT')
+ and (E.emp_fname like 'p%' or E.emp_fname like 'h%');
+ 
+ 
+ select count(distinct emp_position) as emppos from emp;
+ 
+ update emp 
+ set emp_salary = emp_salary*1.10
+ where year(emp_joindate) < 1985;
+ select * from emp;
+
+delete from dept where dept_location = 'Mumbai';
+select * from emp;
+
+
+select proj_name from proj where proj_location = 'Pune';
+
+
+select * from proj where proj_cost between 100000 and 500000;
+
+
+
+select proj_name,proj_cost from proj 
+where proj_cost=(select max(proj_cost) from proj);
+select avg(proj_cost) as avgp from proj;
+
+
+select emp_id , emp_lname
+from emp order by emp_lname desc;
+
+
+select proj_name, proj_cost , proj_year
+from proj where proj_year in (2004,2005,2007);
+
+
+
+
+
+SELECT * FROM edv;
+select proj_name as p from proj;
+
+
