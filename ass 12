@@ -1,0 +1,111 @@
+Group Id: com.example
+
+
+Artifact Id: MongoCRUD
+
+
+<dependencies>
+  <!-- MongoDB Java Driver -->
+  <dependency>
+    <groupId>org.mongodb</groupId>
+    <artifactId>mongodb-driver-sync</artifactId>
+    <version>4.11.0</version>
+  </dependency>
+</dependencies>
+
+
+
+package com.example;
+
+import com.mongodb.client.*;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import org.bson.Document;
+
+import java.util.Scanner;
+
+public class SimpleMongoCRUD {
+    public static void main(String[] args) {
+
+        // MongoDB connection (change if using a remote DB)
+        String uri = "mongodb://localhost:27017";
+        MongoClient client = MongoClients.create(uri);
+
+        MongoDatabase db = client.getDatabase("testdb");
+        MongoCollection<Document> col = db.getCollection("students");
+
+        System.out.println("✅ Connected to MongoDB!");
+
+        Scanner sc = new Scanner(System.in);
+        int choice = 0;
+
+        while (choice != 5) {
+            System.out.println("\n==== MONGO MENU ====");
+            System.out.println("1. Insert student");
+            System.out.println("2. Show all students");
+            System.out.println("3. Update marks by name");
+            System.out.println("4. Delete student by name");
+            System.out.println("5. Exit");
+            System.out.print("Enter choice: ");
+            choice = Integer.parseInt(sc.nextLine().trim());
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter name: ");
+                    String name = sc.nextLine().trim();
+                    System.out.print("Enter branch: ");
+                    String branch = sc.nextLine().trim();
+                    System.out.print("Enter marks: ");
+                    int marks = Integer.parseInt(sc.nextLine().trim());
+                    System.out.print("Enter city: ");
+                    String city = sc.nextLine().trim();
+
+                    col.insertOne(new Document("name", name)
+                            .append("branch", branch)
+                            .append("marks", marks)
+                            .append("city", city));
+                    System.out.println("Record inserted!");
+                    break;
+
+                case 2:
+                    System.out.println("\nName\tBranch\tMarks\tCity");
+                    for (Document d : col.find()) {
+                        System.out.println(d.getString("name") + "\t" +
+                                d.getString("branch") + "\t" +
+                                d.getInteger("marks", 0) + "\t" +
+                                d.getString("city"));
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Enter name to update: ");
+                    String uname = sc.nextLine().trim();
+                    System.out.print("Enter new marks: ");
+                    int newMarks = Integer.parseInt(sc.nextLine().trim());
+                    var result = col.updateOne(Filters.eq("name", uname), Updates.set("marks", newMarks));
+                    System.out.println("Updated " + result.getModifiedCount() + " record(s).");
+                    break;
+
+                case 4:
+                    System.out.print("Enter name to delete: ");
+                    String dname = sc.nextLine().trim();
+                    var del = col.deleteOne(Filters.eq("name", dname));
+                    System.out.println("Deleted " + del.getDeletedCount() + " record(s).");
+                    break;
+
+                case 5:
+                    System.out.println("Exiting...");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+        }
+
+        sc.close();
+        client.close();
+        System.out.println("Done.");
+    }
+}
+
+
