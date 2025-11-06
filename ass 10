@@ -1,0 +1,26 @@
+db.students.insertMany([
+  {name:"aman",branch:"computer",marks:99,city:"pune"},
+  {name:"Arthur",branch:"entc",marks:88,city:"delhi"},
+  {name:"faiyaz",branch:"ai",marks:77,city:"pune"},
+  {name:"ketan",branch:"mehc",marks:87,city:"goa"},
+  {name:"sujal",branch:"ece",marks:67,city:"delhi"}
+  ]);
+  
+db.students.find();
+
+db.students.aggregate([
+  {$group : {
+    _id : "$city",
+    count : {$sum:1},
+    avgmarks : {$avg : "$marks"},
+    minmarks : {$min : "$marks"},
+    maxmarks : {$max : "$marks"}
+  }},
+  {$sort : {avgmarks : -1}}
+  ]);
+  
+  
+db.students.createIndex({city : 1});
+db.students.find({ city: "pune" }); 
+db.students.createIndex({ marks : -1});
+
