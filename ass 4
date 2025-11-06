@@ -1,0 +1,89 @@
+ASSIGNMENT 4 SUCCESSFUL
+
+DELIMITER $$
+
+CREATE PROCEDURE CalculateArea1()
+BEGIN
+    DECLARE radius INT;
+    DECLARE area DECIMAL(10,2);
+    SET radius = 5;
+    
+    WHILE  radius <= 9  do
+        SET area = 3.1416 * radius * radius + 0.0;
+
+        INSERT INTO tableArea (Radius, Area)
+        VALUES (radius, area);
+        
+        SET radius = radius + 1;
+
+    END WHILE;
+        
+END $$
+
+DELIMITER ;
+
+
+
+
+CALL CalculateArea1();
+
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE CheckRadiusRange()
+BEGIN
+    DECLARE count_out_of_range INT;
+
+    SELECT COUNT(*) INTO count_out_of_range
+    FROM tableArea
+    WHERE Radius < 5 OR Radius > 9;
+
+    IF count_out_of_range > 0 THEN
+        SELECT 'Error: Some radius values are outside the range 5 to 9.' AS Message;
+    ELSE
+        SELECT 'All radius values are within the range 5 to 9.' AS Message;
+    END IF;
+END$$
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+CREATE TABLE tableArea (
+    Radius FLOAT,
+    Area FLOAT
+);
+
+DELIMITER $$
+
+CREATE PROCEDURE CalculateArea(IN radius FLOAT)
+BEGIN
+    DECLARE area FLOAT;
+
+    IF radius < 5 OR radius > 9 THEN
+        SELECT 'Radius is out of range' AS Message;
+    ELSE
+        SET area = 3.14*radius*radius;
+
+        INSERT INTO tableArea (Radius, Area)
+        VALUES (radius, area);
+
+        SELECT CONCAT('Area calculated and stored: ', area) AS Message;
+    END IF;
+END $$
+
+DELIMITER ;
+
+CALL CalculateArea(7);
+
+SELECT * FROM tableArea;
+
+
+
