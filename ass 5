@@ -1,0 +1,42 @@
+create table studmark(
+name varchar(50),
+marks int );
+
+create table Result(
+roll int primary key auto_increment,
+Name varchar(50), 
+Class varchar (50));
+
+
+DELIMITER $$
+
+CREATE PROCEDURE proc_Grade()
+BEGIN
+
+  INSERT INTO Result (Name, Class)
+  SELECT
+    s.name,
+    CASE
+      WHEN s.marks BETWEEN 990 AND 1500 THEN 'Distinction'
+      WHEN s.marks BETWEEN 900 AND 989  THEN 'First Class'
+      WHEN s.marks BETWEEN 825 AND 899  THEN 'Higher Second Class'
+      ELSE 'No Category'
+    END AS Class
+  FROM studmark AS s
+  ORDER BY s.name;  
+END $$
+DELIMITER ;
+
+INSERT INTO studmark VALUES
+('Aman', 1200),
+('Araman', 950),
+('Aquaman', 880),
+('Arther', 800);
+
+
+
+CALL proc_Grade();
+
+SELECT * FROM Result;
+
+
